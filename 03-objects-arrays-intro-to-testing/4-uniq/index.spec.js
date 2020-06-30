@@ -1,4 +1,4 @@
-import { uniq } from '../solution';
+import { uniq } from './index.js';
 
 describe('objects-arrays-intro-to-testing/uniq', () => {
   it('should return array with uniq values', () => {
