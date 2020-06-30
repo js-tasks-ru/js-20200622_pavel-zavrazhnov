@@ -1,4 +1,4 @@
-import { invertObj } from '../solution';
+import { invertObj } from './index.js';
 
 describe('objects-arrays-intro-to-testing/invert-object', () => {
   it('should swap keys and values and return new object', () => {
