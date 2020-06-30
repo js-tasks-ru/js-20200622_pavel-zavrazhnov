@@ -1,4 +1,4 @@
-import { createGetter } from './index.js';
+import { createGetter } from '../solution';
 
 describe('objects-arrays-intro-to-testing/create-getter', () => {
   it('should return existed properties', () => {
