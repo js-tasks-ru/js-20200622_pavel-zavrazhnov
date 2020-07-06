@@ -42,6 +42,10 @@
       orders.append(ordersChart.element);
       sales.append(salesChart.element);
       customers.append(customersChart.element);
+
+      setTimeout( () => {
+        salesChart.update({bodyData: [10, 20, 50, 35]})
+      }, 5000)
     </script>
   </body>
 </html>
