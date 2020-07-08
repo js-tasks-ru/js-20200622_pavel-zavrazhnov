@@ -1,6 +1,6 @@
 export default class NotificationMessage {
   static instance;
-  hide = true;
+  visible = false;
   constructor(message, {
     duration = 2000,
     type = 'success'
@@ -33,23 +33,16 @@ export default class NotificationMessage {
     ;
   }
 
-  show(element) {
-    if (!this.hide) {
+  show(element = document.body) {
+    if (this.visible) {
       this.remove();
       clearTimeout(this.timerId);
-      console.log(this.timerId);
     }
-    if (element) {
-      element.append(this.element);
-    } else {
-      document.body.append(this.element);
-    }
-    //NotificationMessage.instance.element.style.display = 'none';
-    //NotificationMessage.instance.element.style.display = 'block';
-    this.hide = false;
+    element.append(this.element);
+    this.visible = true;
     this.timerId = setTimeout(() => {
       this.remove();
-      this.hide = true;
+      this.visible = false;
     }, this.duration);
   }
   remove() {
