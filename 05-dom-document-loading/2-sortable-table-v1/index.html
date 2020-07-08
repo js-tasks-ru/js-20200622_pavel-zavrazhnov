@@ -59,7 +59,14 @@
       id: 'price',
       title: 'Price',
       sortable: true,
-      sortType: 'number'
+      sortType: 'number',
+      template: (value = null) => {
+        return `
+          <div class="sortable-table__cell">
+            ${value ? '$' + value : ''}
+          </div>
+        `;
+      }
     },
     {
       id: 'sales',
