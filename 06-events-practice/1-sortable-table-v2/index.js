@@ -150,7 +150,7 @@ export default class SortableTable {
     const allColumns = this.element.querySelectorAll('.sortable-table__cell[data-id]');
     allColumns.forEach(column => {
       if (column.dataset.sortable === 'true') {
-        column.addEventListener('pointerdown', this.onHeaderPointerDown);
+        column.removeEventListener('pointerdown', this.onHeaderPointerDown);
       }
     });
     this.remove();
