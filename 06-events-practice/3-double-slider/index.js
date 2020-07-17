@@ -27,9 +27,10 @@ export default class DoubleSlider {
   }
 
   getRange() {
+    const rangeValue = this.max - this.min;
     return {
-      from: Math.round(this.min + .01 * parseFloat(this.subElements.thumbLeft.style.left) * (this.max - this.min)),
-      to: Math.round(this.max - .01 * parseFloat(this.subElements.thumbRight.style.right) * (this.max - this.min))
+      from: Math.round(this.min + .01 * parseFloat(this.subElements.thumbLeft.style.left) * (rangeValue)),
+      to: Math.round(this.max - .01 * parseFloat(this.subElements.thumbRight.style.right) * (rangeValue))
     };
   }
 
@@ -79,9 +80,10 @@ export default class DoubleSlider {
   }
 
   onThumbPointerMove = (event) => {
+    const innerRect = this.subElements.inner.getBoundingClientRect();
     switch (this.draggingThumb.dataset.element) {
     case 'thumbLeft':
-      let newThumbLeft = (event.clientX - this.subElements.inner.getBoundingClientRect().left + this.shiftX) / this.subElements.inner.offsetWidth;
+      let newThumbLeft = (event.clientX - innerRect.left + this.shiftX) / innerRect.width;
       if (newThumbLeft < 0) {
         newThumbLeft = 0;
       }
@@ -94,7 +96,7 @@ export default class DoubleSlider {
       this.subElements.from.innerHTML = this.formatValue(this.getRange().from);
       break;
     case 'thumbRight':
-      let newThumbRight = (this.subElements.inner.getBoundingClientRect().right - event.clientX - this.shiftX) / this.subElements.inner.offsetWidth;
+      let newThumbRight = (innerRect.right - event.clientX - this.shiftX) / innerRect.width;
       if (newThumbRight < 0) {
         newThumbRight = 0;
       }
