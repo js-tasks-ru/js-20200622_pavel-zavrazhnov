@@ -21,12 +21,7 @@ export default class ColumnChart {
     this.link = link;
     this.value = value;
 
-    this.element = document.createElement('div');
-    this.element.className = 'column-chart column-chart_loading';
-
     this.render();
-    this.subElements.header = this.element.querySelector('.column-chart__header');
-    this.subElements.body = this.element.querySelector('.column-chart__chart');
     this.update(range.from, range.to);
   }
 
@@ -66,17 +61,20 @@ export default class ColumnChart {
   async update(from, to) {
     this.element.className = 'column-chart column-chart_loading';
     this.data = await this.fetchData(this.url, from, to);
-    if (Object.keys(this.data).length > 0) {
+    if (Object.keys(this.data)) {
+      const {header, body} = this.subElements;
       this.value = Object.entries(this.data).reduce((sum, [_, value]) => sum + Number(value), 0);
       this.setColumns();
-      this.subElements.header.innerHTML = this.formatHeading(this.value);
-      this.subElements.body.innerHTML = this.renderColumns();
+      header.innerHTML = this.formatHeading(this.value);
+      body.innerHTML = this.renderColumns();
       this.element.className = 'column-chart';
     }
   }
 
   render() {
     const viewAll = this.link ? `<a href="/${this.link}" class="column-chart__link">View all</a>` : '';
+    this.element = document.createElement('div');
+    this.element.className = 'column-chart column-chart_loading';
 
     this.element.innerHTML = `
       <div class="column-chart__title">
@@ -89,6 +87,8 @@ export default class ColumnChart {
       <div class="column-chart__chart">
       </div>
     `;
+    this.subElements.header = this.element.querySelector('.column-chart__header');
+    this.subElements.body = this.element.querySelector('.column-chart__chart');
   }
 
   remove() {
