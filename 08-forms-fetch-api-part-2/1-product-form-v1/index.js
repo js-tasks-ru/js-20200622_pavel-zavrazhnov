@@ -211,10 +211,11 @@ export default class ProductForm {
   }
 
   async render () {
-    const categories = await this.loadCategories();
-
+    let categories;
     if (this.productId) {
-      this.product = await this.loadProductData();
+      [categories, this.product] = await Promise.all([this.loadCategories(), this.loadProductData()]);
+    } else {
+      categories = await this.loadCategories();
     }
 
     const element = document.createElement('div');
