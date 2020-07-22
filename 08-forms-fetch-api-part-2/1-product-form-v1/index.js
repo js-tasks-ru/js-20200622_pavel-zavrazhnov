@@ -171,7 +171,7 @@ export default class ProductForm {
       });
       this.element.dispatchEvent(productCustomEvent);
     } catch (e) {
-      console.error(e);
+      //console.error(e);
     }
   }
 
