@@ -1,6 +1,6 @@
+import SortableList from '../2-sortable-list/index.js';
 import escapeHtml from './utils/escape-html.js';
 import fetchJson from './utils/fetch-json.js';
-import {FetchError} from "./utils/fetch-json";
 
 const IMGUR_CLIENT_ID = '28aaa2e823b03b1';
 const BACKEND_URL = 'https://course-js.javascript.ru';
@@ -16,7 +16,8 @@ export default class ProductForm {
     subcategory: '',
     status: 1,
     price: 100,
-    discount: 0
+    discount: 0,
+    images: []
   };
 
   constructor(productId = '') {
@@ -40,12 +41,6 @@ export default class ProductForm {
       </li>`;
   }
 
-  getImageList () {
-    return (this.productId)
-      ? this.product.images.map(image => `${this.getImageRow(image)}`).join('')
-      : '';
-  }
-
   template () {
     return `
       <div class="product-form">
@@ -63,9 +58,7 @@ export default class ProductForm {
           </div>
           <div class="form-group form-group__wide" data-element="sortable-list-container">
             <label class="form-label">Фото</label>
-            <div data-element="imageListContainer">
-              <ul class="sortable-list" data-element="imageList">${this.getImageList()}</ul>
-            </div>
+            <div data-element="imageListContainer"></div>
             <button type="button" name="uploadImage" class="button-primary-outline" data-element="uploadImage"><span>Загрузить</span></button>
           </div>
           <div class="form-group form-group__half_left">
@@ -114,28 +107,23 @@ export default class ProductForm {
     const categoriesUrl = new URL('api/rest/categories', this.baseUrl);
     categoriesUrl.searchParams.set('_sort', 'weight');
     categoriesUrl.searchParams.set('_refs', 'subcategory');
-    try {
-      const categories = await fetchJson(categoriesUrl.href);
-      return this.prepareCategories(categories);
-    } catch (e) {
-      throw new FetchError(response, 'Network error has occurred.');
-    }
+
+    const categories = await fetchJson(categoriesUrl.href);
+    return this.prepareCategories(categories);
+
   }
 
   async loadProductData () {
     const productsUrl = new URL('api/rest/products', this.baseUrl);
     productsUrl.searchParams.set('id', this.productId);
-    try {
-      const data = await fetchJson(productsUrl.href);
-      return data[0];
-    } catch (e) {
-      return [];
-    }
+
+    const data = await fetchJson(productsUrl.href);
+    return data[0];
   }
 
   prepareFormData() {
-    const {title, description, subcategory, price, quantity, discount, status, imageList} = this.subElements;
-    const images = [...imageList.children].map(item => {
+    const {title, description, subcategory, price, quantity, discount, status} = this.subElements;
+    const images = [...this.sortableList.element.children].map(item => {
       return {
         source: item.dataset.source,
         url: item.dataset.url
@@ -172,7 +160,7 @@ export default class ProductForm {
       });
       this.element.dispatchEvent(productCustomEvent);
     } catch (e) {
-      //console.error(e);
+      alert(e);
     }
   }
 
@@ -183,7 +171,7 @@ export default class ProductForm {
 
   onFileChange = async event => {
     const file = event.target.files[0];
-    const { uploadImage, imageList } = this.subElements;
+    const { uploadImage } = this.subElements;
     uploadImage.classList.add("is-loading");
     uploadImage.disabled = true;
     const formData = new FormData();
@@ -196,10 +184,10 @@ export default class ProductForm {
         },
         body: formData,
       });
-      imageList.innerHTML +=
-        this.getImageRow({url: response.data.link, source: file.name});
+
+      this.sortableList.addItem(this.createImageRow({url: response.data.link, source: file.name}));
     } catch (e) {
-      //alert(e);
+      alert(e);
     } finally {
       uploadImage.classList.remove("is-loading");
       uploadImage.disabled = false;
@@ -211,13 +199,19 @@ export default class ProductForm {
     fileInput.click();
   }
 
+  createImageRow (image) {
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = this.getImageRow(image);
+
+    return wrapper.firstElementChild;
+  }
+
   async render () {
     let categories;
-    if (this.productId) {
-      [categories, this.product] = await Promise.all([this.loadCategories(), this.loadProductData()]);
-    } else {
-      categories = await this.loadCategories();
-    }
+    [categories, this.product] = await Promise.all([
+      this.loadCategories(),
+      (this.productId) ? this.loadProductData() : Promise.resolve(this.product)
+    ]);
 
     const element = document.createElement('div');
 
@@ -225,7 +219,7 @@ export default class ProductForm {
 
     this.element = element.firstElementChild;
     this.subElements = this.getSubElements(this.element);
-    const { productForm, subcategory, uploadImage, fileInput } = this.subElements;
+    const { productForm, subcategory, uploadImage, imageListContainer, fileInput } = this.subElements;
     productForm.addEventListener('submit', this.onSubmit);
     uploadImage.addEventListener('click', this.onImageUpload);
     fileInput.addEventListener('change', this.onFileChange);
@@ -237,6 +231,13 @@ export default class ProductForm {
     ['title', 'description', 'price', 'discount', 'quantity', 'status'].forEach(key => {
       this.subElements[key].value = this.product[key];
     });
+
+    this.sortableList = new SortableList({
+      items: this.product.images.map(image => {
+        return this.createImageRow(image);
+      })
+    });
+    imageListContainer.append(this.sortableList.element);
 
     return this.element;
   }

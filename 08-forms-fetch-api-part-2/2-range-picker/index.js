@@ -39,21 +39,20 @@ export default class RangePicker {
         if (this.range.to < this.range.from) {
           [this.range.from, this.range.to] = [this.range.to, this.range.from];
         }
-        // todo custom event
-        this.element.dispatchEvent(new CustomEvent("date-select",{
+        this.element.dispatchEvent(new CustomEvent('date-select', {
           bubbles: true,
           detail: this.range
         }));
-        this.element.classList.toggle("rangepicker_open");
+        this.element.classList.toggle('rangepicker_open');
         this.isOpen = !this.isOpen;
         this.subElements.from.innerHTML = this.range.from.toLocaleString(this.locale, {
-          dateStyle: "short"
+          dateStyle: 'short'
         });
         this.subElements.to.innerHTML = this.range.to.toLocaleString(this.locale, {
-          dateStyle: "short"
+          dateStyle: 'short'
         });
       }
-      this.renderSelector();
+      this.renderSelectedRange();
     }
   }
 
@@ -71,9 +70,11 @@ export default class RangePicker {
       cell.className = 'rangepicker__cell';
       if (this.range.from && value === this.range.from.toISOString()) {
         cell.className += ' rangepicker__selected-from';
-      } else if (this.range.to && value === this.range.to.toISOString()) {
+      }
+      if (this.range.to && value === this.range.to.toISOString()) {
         cell.className += ' rangepicker__selected-to';
-      } else if ((this.range.from && this.range.to) && value > this.range.from.toISOString() && value < this.range.to.toISOString()) {
+      }
+      if ((this.range.from && this.range.to) && value > this.range.from.toISOString() && value < this.range.to.toISOString()) {
         cell.className += ' rangepicker__selected-between';
       }
     });
@@ -151,7 +152,7 @@ export default class RangePicker {
     this.subElements = this.getSubElements(element);
     const { input, selector } = this.subElements;
     input.addEventListener('click', this.onInputClick);
-    selector.addEventListener('click', this.onSelectorClick);
+    selector.addEventListener('click', this.onSelectorClick, true);
     document.addEventListener('click', this.onDocumentClick, true);
   }
 
