@@ -13,8 +13,8 @@ export default class SortableList {
     this.itemInitIndex = [...this.element.children].indexOf(item);
     const itemRect = item.getBoundingClientRect();
     this.pointerInitShift = {
-      x: clientX - itemRect.x,
-      y: clientY - itemRect.y
+      x: clientX - itemRect.left,
+      y: clientY - itemRect.top
     };
     this.draggingItem = item;
     this.placeholderItem = document.createElement('div');
