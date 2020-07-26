@@ -1,6 +1,9 @@
 const config = {
   verbose: true,
-  setupFilesAfterEnv: ['./jest-setup-files-after-env.js']
+  setupFilesAfterEnv: ['./jest-setup-files-after-env.js'],
+  modulePathIgnorePatterns: [
+    ".*__mocks__.*"
+  ]
 };
 
 if (process.env.CI) {
