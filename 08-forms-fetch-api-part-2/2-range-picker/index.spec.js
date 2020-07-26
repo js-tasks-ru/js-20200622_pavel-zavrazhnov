@@ -343,7 +343,7 @@ describe('forms-fetch-api-part-2/range-picker', () => {
     const rightNavigation = rangePicker.element.querySelector('.rangepicker__selector-control-right');
 
     for (let i = 0; i < MONTHS_COUNT; i++) {
-      rightNavigation.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      rightNavigation.dispatchEvent(new MouseEvent('click'));
     }
 
     const [_, secondCalendar] = selector.querySelectorAll('.rangepicker__calendar');
