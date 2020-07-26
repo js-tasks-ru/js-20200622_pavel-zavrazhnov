@@ -11,15 +11,16 @@ export default class SortableList {
 
   startDragging (item, {clientX, clientY}) {
     this.itemInitIndex = [...this.element.children].indexOf(item);
+    const itemRect = item.getBoundingClientRect();
     this.pointerInitShift = {
-      x: clientX - item.getBoundingClientRect().x,
-      y: clientY - item.getBoundingClientRect().y
+      x: clientX - itemRect.x,
+      y: clientY - itemRect.y
     };
     this.draggingItem = item;
     this.placeholderItem = document.createElement('div');
     this.placeholderItem.className = 'sortable-list__placeholder';
-    item.style.width = item.offsetWidth + 'px';
-    item.style.height = item.offsetHeight + 'px';
+    item.style.width = `${item.offsetWidth}px`;
+    item.style.height = `${item.offsetHeight}px`;
     this.placeholderItem.style.width = item.style.width;
     this.placeholderItem.style.height = item.style.height;
     item.classList.add('sortable-list__item_dragging');
@@ -75,7 +76,6 @@ export default class SortableList {
   }
 
   stopDragging() {
-    //let index = [...this.element.children].indexOf(this.placeholderItem);
     this.placeholderItem.replaceWith(this.draggingItem);
     this.draggingItem.classList.remove('sortable-list__item_dragging');
     this.draggingItem.style.left = '';

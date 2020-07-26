@@ -46,7 +46,7 @@ export default class ProductForm {
       : '';
   }
 
-  template () {
+  get template () {
     return `
       <div class="product-form">
         <form data-element="productForm" class="form-grid">
@@ -182,7 +182,7 @@ export default class ProductForm {
   }
 
   onFileChange = async event => {
-    const file = event.target.files[0];
+    const [file] = event.target.files;
     const { uploadImage, imageList } = this.subElements;
     uploadImage.classList.add("is-loading");
     uploadImage.disabled = true;
@@ -221,7 +221,7 @@ export default class ProductForm {
 
     const element = document.createElement('div');
 
-    element.innerHTML = this.template();
+    element.innerHTML = this.template;
 
     this.element = element.firstElementChild;
     this.subElements = this.getSubElements(this.element);

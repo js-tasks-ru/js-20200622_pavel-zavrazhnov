@@ -130,7 +130,7 @@ export default class RangePicker {
     return `<span data-element="from">${from}</span> - <span data-element="to">${to}</span>`;
   }
 
-  template () {
+  get template () {
     return `
       <div class="rangepicker">
         <div class="rangepicker__input" data-element="input">
@@ -153,7 +153,7 @@ export default class RangePicker {
 
   render () {
     const $wrapper = document.createElement('div');
-    $wrapper.innerHTML = this.template();
+    $wrapper.innerHTML = this.template;
     const element = $wrapper.firstElementChild;
     this.element = element;
     this.subElements = this.getSubElements(element);
