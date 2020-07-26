@@ -22,13 +22,7 @@ export default class RangePicker {
   }
 
   onSelectorClick = event => {
-    if (event.target.className === 'rangepicker__selector-control-left') {
-      this.startDate.setMonth(this.startDate.getMonth() - 1);
-      this.renderSelector();
-    } else if (event.target.className === 'rangepicker__selector-control-right') {
-      this.startDate.setMonth(this.startDate.getMonth() + 1);
-      this.renderSelector();
-    } else if (event.target.className.includes('rangepicker__cell')) {
+    if (event.target.className.includes('rangepicker__cell')) {
       if (this.range.from && this.range.to) {
         this.range = {
           from: new Date(event.target.dataset.value),
@@ -123,6 +117,9 @@ export default class RangePicker {
       <div class="rangepicker__selector-control-left"></div>
       <div class="rangepicker__selector-control-right"></div>
       ${this.renderMonth(monthFrom)}${this.renderMonth(monthTo)}`;
+    const { selector } = this.subElements;
+    selector.querySelector('.rangepicker__selector-control-left').addEventListener('click', this.prevMonth);
+    selector.querySelector('.rangepicker__selector-control-right').addEventListener('click', this.nextMonth);
     this.renderSelectedRange();
   }
 
@@ -144,6 +141,16 @@ export default class RangePicker {
     `;
   }
 
+  prevMonth = () => {
+    this.startDate.setMonth(this.startDate.getMonth() - 1);
+    this.renderSelector();
+  }
+
+  nextMonth = () => {
+    this.startDate.setMonth(this.startDate.getMonth() + 1);
+    this.renderSelector();
+  }
+
   render () {
     const $wrapper = document.createElement('div');
     $wrapper.innerHTML = this.template();
@@ -152,7 +159,7 @@ export default class RangePicker {
     this.subElements = this.getSubElements(element);
     const { input, selector } = this.subElements;
     input.addEventListener('click', this.onInputClick);
-    selector.addEventListener('click', this.onSelectorClick, true);
+    selector.addEventListener('click', this.onSelectorClick);
     document.addEventListener('click', this.onDocumentClick, true);
   }
 
